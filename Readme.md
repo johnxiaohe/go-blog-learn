@@ -1,3 +1,5 @@
+# Links
+> https://eddycjy.com/posts/
 
 # go命令
 > 1. 开启GOMODEL、设置GOPROXY
