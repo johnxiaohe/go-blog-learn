@@ -14,8 +14,9 @@ require (
 replace (
 	gin-example.com/v0/conf => ./conf
 	gin-example.com/v0/middleware => ./middleware
+	gin-example.com/v0/models => ./models
 	gin-example.com/v0/pkg/setting => ./pkg/setting
 	gin-example.com/v0/routers => ./routers
+	gin-example.com/v0/routers/V1 => ./routers/v1
 	gin-example.com/v0/runtime => ./runtime
-	gin-example.com/vo/models => ./models
 )
