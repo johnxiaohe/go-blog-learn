@@ -9,7 +9,7 @@ import (
 
 // 定义加载配置的对象 和 变量
 var (
-	// 配置对象, 存储地址指针
+	// 配置对象, 存储地址指针. 首字母大写表示公共属性
 	Cfg *ini.File
 
 	RunMode string
