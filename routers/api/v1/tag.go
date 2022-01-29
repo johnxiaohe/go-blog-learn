@@ -1,6 +1,7 @@
 package v1
 
 import (
+	"log"
 	"net/http"
 
 	"gin-example.com/v0/models"
@@ -48,23 +49,19 @@ func getTags(c *gin.Context) {
 
 //新增文章标签
 func addTag(c *gin.Context) {
-	name := c.Query("name")
-	state := com.StrTo(c.DefaultQuery("state", "0")).MustInt()
-	createdBy := c.Query("created_by")
+	var tag models.Tag
+	c.BindJSON(&tag)
+	log.Printf("%+v\n", &tag)
 
 	valid := validation.Validation{}
-	valid.Required(name, "name").Message("名称不能为空")
-	valid.MaxSize(name, 100, "name").Message("名称最长为100字符串")
-	valid.Required(createdBy, "created_by").Message("创建人不能为空")
-	valid.MaxSize(createdBy, 100, "created_by").Message("创建人最长为100字符")
-	valid.Range(state, 0, 1, "state").Message("状态只允许为0或1")
+	ok, _ := valid.Valid(&tag)
 
 	code := e.INVALID_PARAMS
 
-	if !valid.HasErrors() {
-		if !models.ExistTagByName(name) {
+	if ok {
+		if !models.ExistTagByName(tag.Name) {
 			code = e.SUCCESS
-			models.AddTag(name, state, createdBy)
+			models.AddTag(&tag)
 		} else {
 			code = e.ERROR_EXIST_TAG
 		}
@@ -91,24 +88,24 @@ func editTag(c *gin.Context) {
 		state = com.StrTo(arg).MustInt()
 		valid.Range(state, 0, 1, "state").Message("状态只允许为0或1")
 	}
-	
+
 	valid.Required(id, "id").Message("ID不能为空")
 	valid.Required(modifiedBy, "modified_by").Message("修改人不能为空")
 	valid.MaxSize(modifiedBy, 100, "modified_by").Message("修改人最长为100字符")
 	valid.MaxSize(name, 100, "name").Message("名称最长为100字符")
 
 	code := e.INVALID_PARAMS
-	if ! valid.HasErrors(){
+	if !valid.HasErrors() {
 		code = e.SUCCESS
 		if models.ExistTagById(id) {
 			data := make(map[string]interface{})
 			data["modified_by"] = modifiedBy
 			if name != "" {
-                data["name"] = name
-            }
-            if state != -1 {
-                data["state"] = state
-            }
+				data["name"] = name
+			}
+			if state != -1 {
+				data["state"] = state
+			}
 			models.EditTag(id, data)
 		} else {
 			code = e.ERROR_NOT_EXIST_TAG
@@ -117,7 +114,7 @@ func editTag(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
 		"code": code,
-		"msg": e.GetMsg(code),
+		"msg":  e.GetMsg(code),
 		"data": make(map[string]string),
 	})
 
@@ -152,9 +149,9 @@ func InitTagApis(apiv1 *gin.RouterGroup) {
 	//获取标签列表
 	apiv1.GET("/tags", getTags)
 	//新建标签
-	apiv1.POST("/tags", addTag)
+	apiv1.POST("/tag", addTag)
 	//更新指定标签
-	apiv1.PUT("/tags/:id", editTag)
+	apiv1.PUT("/tag/:id", editTag)
 	//删除指定标签
-	apiv1.DELETE("/tags/:id", deleteTag)
+	apiv1.DELETE("/tag/:id", deleteTag)
 }

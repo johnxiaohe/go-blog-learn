@@ -9,10 +9,10 @@ import (
 type Tag struct {
 	Model
 
-	Name       string `json:"name"`
-	CreateBy   string `json:"create_by"`
-	ModifiedBy string `json:"modified_by"`
-	State      int    `json:"state"`
+	Name       string `json:"name" valid:"Required; MaxSize(100)"`
+	CreatedBy  string `json:"createdBy" valid:"Required; MaxSize(100)"`
+	ModifiedBy string `json:"modifiedBy"`
+	State      int    `json:"state,string" valid:"Required; Range(0,1)"`
 }
 
 // 声明Tag的方法
@@ -50,12 +50,12 @@ func ExistTagById(id int) bool {
 	return tag.ID > 0
 }
 
-func AddTag(name string, state int, createBy string) bool {
-	if !ExistTagByName(name) {
+func AddTag(tag *Tag) bool {
+	if !ExistTagByName(tag.Name) {
 		db.Create(&Tag{
-			Name:     name,
-			State:    state,
-			CreateBy: createBy,
+			Name:      tag.Name,
+			State:     tag.State,
+			CreatedBy: tag.CreatedBy,
 		})
 	}
 
@@ -67,7 +67,7 @@ func DeleteTag(id int) bool {
 	return true
 }
 
-func EditTag(id int, data interface {}) bool {
+func EditTag(id int, data interface{}) bool {
 	db.Model(&Tag{}).Where("id = ?", id).Update(data)
 	return true
 }

@@ -11,25 +11,24 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type auth struct {
-	Username string `valid:"Required; MaxSize(50)"`
-	Password string `valid:"Required; MaxSize(50)"`
+type Auth struct {
+	Username string `json:"username" valid:"Required; MaxSize(50)"`
+	Password string `json:"password" valid:"Required; MaxSize(50)"`
 }
 
 func GetAuth(c *gin.Context) {
-	username := c.Query("username")
-	password := c.Query("password")
-
+	var json Auth
+	c.BindJSON(&json)
+	// log.Printf("%v\n", &json)
 	valid := validation.Validation{}
-	a := auth{Username: username, Password: password}
-	ok, _ := valid.Valid(&a)
+	ok, _ := valid.Valid(&json)
 
 	data := make(map[string]interface{})
 	code := e.INVALID_PARAMS
 	if ok {
-		isExist := models.CheckAuth(username, password)
+		isExist := models.CheckAuth(json.Username, json.Password)
 		if isExist {
-			token, err := util.GenerateToken(username, password)
+			token, err := util.GenerateToken(json.Username, json.Password)
 			if err != nil {
 				code = e.ERROR_AUTH_TOKEN
 			} else {

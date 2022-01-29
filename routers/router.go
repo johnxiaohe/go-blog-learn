@@ -15,8 +15,8 @@ func InitRouter() *gin.Engine {
 	r.Use(gin.Recovery())
 
 	gin.SetMode(setting.RunMode)
-	
-	r.GET("/AUTH", v1.GetAuth)
+
+	r.POST("/auth", v1.GetAuth)
 
 	r.GET("/ping", func(c *gin.Context) {
 		c.JSON(200, gin.H{
