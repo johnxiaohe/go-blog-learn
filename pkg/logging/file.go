@@ -1,6 +1,9 @@
 package logging
 
-import "fmt"
+import (
+	"fmt"	"time"
+)
+
 
 var (
 	LogSavePath = "runtime/logs/"
@@ -10,5 +13,10 @@ var (
 )
 
 func getLogFilePath() string {
-	return fmt.Sprintf("%s", LogSavePath)
+	return LogSavePath
+}
+
+func getLogFileFullPath() string {
+	prefixPath := getLogFilePath()
+	suffixPath := fmt.Sprintf("%s%s.%s", LogSaveName, time.Now().Format(TimeFormat), LogFileExt)
 }
