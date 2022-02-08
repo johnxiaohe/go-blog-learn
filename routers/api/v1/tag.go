@@ -1,7 +1,6 @@
 package v1
 
 import (
-	"log"
 	"net/http"
 
 	"gin-example.com/v0/models"
@@ -51,7 +50,6 @@ func getTags(c *gin.Context) {
 func addTag(c *gin.Context) {
 	var tag models.Tag
 	c.BindJSON(&tag)
-	log.Printf("%+v\n", &tag)
 
 	valid := validation.Validation{}
 	ok, _ := valid.Valid(&tag)
